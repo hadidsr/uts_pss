@@ -2,6 +2,53 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 
 # Create your views here.
+from django.db.models import Count, Sum, Avg, F
+
+#Dashboard
+def dashboard(request):
+    # Stock Summary
+    total_stock = Item.objects.aggregate(Sum('quantity'))['quantity__sum']
+    total_stock_value = Item.objects.aggregate(total_value=Sum(F('price') * F('quantity')))['total_value']
+    average_price = Item.objects.aggregate(Avg('price'))['price__avg']
+
+    # Category Summary
+    categories = Category.objects.annotate(
+        item_count=Count('item'),
+        total_stock_value=Sum(F('item__price') * F('item__quantity')),
+        average_price=Avg('item__price')
+    )
+
+    # Supplier Summary
+    suppliers = Supplier.objects.annotate(
+        item_count=Count('item'),
+        total_value_supplied=Sum(F('item__price') * F('item__quantity'))
+    )
+
+    # Overall System Summary
+    total_items = Item.objects.aggregate(Sum('quantity'))['quantity__sum']
+    total_categories = Category.objects.count()
+    total_suppliers = Supplier.objects.count()
+    
+    # Items Below Threshold
+    threshold = 5
+    items_below_threshold = Item.objects.filter(quantity__lt=threshold)
+
+    context = {
+        'total_stock': total_stock,
+        'total_stock_value': total_stock_value,
+        'average_price': average_price,
+        'categories': categories,
+        'suppliers': suppliers,
+        'total_items': total_items,
+        'total_stock_value': total_stock_value,
+        'total_categories': total_categories,
+        'total_suppliers': total_suppliers,
+        'items_below_threshold': items_below_threshold,
+        'threshold': threshold,
+    }
+
+    return render(request, 'dashboard.html', context)
+
 from .forms import *
 
 ## Manage Items

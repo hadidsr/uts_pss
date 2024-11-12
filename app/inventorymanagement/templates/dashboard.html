@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Dashboard</h2>
+
+    <!-- Stock Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white text-dark shadow-lg rounded-lg p-6">
+            <h5 class="text-lg font-semibold text-gray-700">Total Stock</h5>
+            <p class="text-xl font-medium text-gray-800">{{ total_stock }}</p>
+        </div>
+        <div class="bg-white text-dark shadow-lg rounded-lg p-6">
+            <h5 class="text-lg font-semibold text-gray-700">Total Stock Value</h5>
+            <p class="text-xl font-medium text-gray-800">Rp {{ total_stock_value|floatformat:2 }}</p>
+        </div>
+        <div class="bg-white text-dark shadow-lg rounded-lg p-6">
+            <h5 class="text-lg font-semibold text-gray-700">Average Price</h5>
+            <p class="text-xl font-medium text-gray-800">Rp {{ average_price|floatformat:2 }}</p>
+        </div>
+    </div>
+
+    <!-- Category Summary -->
+    <div class="mb-6">
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <h5 class="text-xl font-semibold text-gray-800 mb-4">Category Summary</h5>
+            <table class="min-w-full table-auto border-collapse border border-gray-200">
+                <thead class="bg-gray-800 text-gray-200">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Category</th>
+                        <th class="py-3 px-4 text-left">Item Count</th>
+                        <th class="py-3 px-4 text-left">Total Stock Value</th>
+                        <th class="py-3 px-4 text-left">Average Price</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-700">
+                    {% for category in categories %}
+                    <tr class="border-b hover:bg-gray-100">
+                        <td class="py-3 px-4">{{ category.name }}</td>
+                        <td class="py-3 px-4">{{ category.item_count }}</td>
+                        <td class="py-3 px-4">Rp {{ category.total_stock_value|floatformat:2 }}</td>
+                        <td class="py-3 px-4">Rp {{ category.average_price|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Supplier Summary -->
+    <div class="mb-6">
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <h5 class="text-xl font-semibold text-gray-800 mb-4">Supplier Summary</h5>
+            <table class="min-w-full table-auto border-collapse border border-gray-200">
+                <thead class="bg-gray-800 text-gray-200">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Supplier</th>
+                        <th class="py-3 px-4 text-left">Item Count</th>
+                        <th class="py-3 px-4 text-left">Total Value Supplied</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-700">
+                    {% for supplier in suppliers %}
+                    <tr class="border-b hover:bg-gray-100">
+                        <td class="py-3 px-4">{{ supplier.name }}</td>
+                        <td class="py-3 px-4">{{ supplier.item_count }}</td>
+                        <td class="py-3 px-4">Rp {{ supplier.total_value_supplied|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+    <!-- Items Below Threshold -->
+    <div class="mb-6">
+        <div class="bg-yellow-500 text-dark shadow-lg rounded-lg p-6">
+            <h5 class="text-xl font-semibold text-gray-800 mb-4">Items Below Threshold ({{ threshold }})</h5>
+            <ul class="list-none">
+                {% for item in items_below_threshold %}
+                <li class="flex justify-between items-center py-3 px-4 border-b border-gray-300">
+                    {{ item.name }} <span class="bg-red-500 text-white py-1 px-3 rounded-full">{{ item.quantity }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
